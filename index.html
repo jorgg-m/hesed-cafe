@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hesed Café - Menú</title>
+    <style>
+        :root {
+            --bg-color: #f7f3eb;
+            --brand-dark: #403927;
+            --accent-green: #3b5332;
+            --accent-red: #8a3333;
+            --accent-gold: #b58d3d;
+            --text-main: #2b2b2b;
+            --text-muted: #555555;
+            --line-color: #d1c7b7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--brand-dark);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Menu Container mimicking the card aspect ratio */
+        .menu-container {
+            width: 100%;
+            max-width: 440px;
+            height: 100vh;
+            max-height: 850px;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        @media (min-width: 480px) {
+            .menu-container {
+                border-radius: 12px;
+                height: 90vh;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .menu-container { max-width: 720px; max-height: 1100px; }
+            .menu-header { padding: 16px 24px; }
+            .menu-header img { max-width: 360px; }
+            .page-content { padding: 28px 32px 60px; }
+            h2.section-title { font-size: 1.1rem; margin-bottom: 22px; padding-bottom: 8px; }
+            h2.section-title[style] { margin-top: 32px !important; }
+            .menu-item { margin-bottom: 22px; }
+            .item-details { padding-right: 24px; }
+            .item-name, .item-price { font-size: 1.08rem; }
+            .item-desc { font-size: .88rem; margin-top: 6px; line-height: 1.4; }
+            .menu-footer { padding: 14px 28px; font-size: .8rem; }
+            .page-hint b { font-size: 2rem; }
+            .page-hint span { font-size: .8rem; bottom: 60px; }
+            .nav-zone { top: 72px; bottom: 48px; }
+        }
+
+        /* Header */
+        .menu-header {
+            background-color: var(--brand-dark);
+            color: #ffffff;
+            text-align: center;
+            padding: 18px 10px 12px;
+            flex-shrink: 0;
+        }
+
+        .menu-header img {
+            display: block;
+            margin: 0 auto;
+            width: 82%;
+            max-width: 280px;
+            height: auto;
+        }
+
+        /* Scrollable Page Body */
+        .page-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 20px 50px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .menu-page { display: none; }
+        .menu-page.active { display: block; }
+        .menu-page.active.from-right { animation: inR .28s ease; }
+        .menu-page.active.from-left { animation: inL .28s ease; }
+
+        @keyframes inR {
+            from { opacity: 0; transform: translateX(16px); }
+            to { opacity: 1; transform: none; }
+        }
+        @keyframes inL {
+            from { opacity: 0; transform: translateX(-16px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .menu-page.active { animation: none; }
+        }
+
+        /* Typography & Sections */
+        h2.section-title {
+            font-size: 0.95rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            padding-bottom: 4px;
+            border-bottom: 1.5px solid;
+        }
+
+        .t-red { color: var(--accent-red); border-color: var(--accent-red); }
+        .t-green { color: var(--accent-green); border-color: var(--accent-green); }
+        .t-gold { color: var(--accent-gold); border-color: var(--accent-gold); }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 14px;
+        }
+
+        .item-details {
+            flex: 1;
+            padding-right: 15px;
+        }
+
+        .item-name {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .item-desc {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            line-height: 1.2;
+        }
+
+        .item-price {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-main);
+            white-space: nowrap;
+        }
+
+        .sub-group {
+            margin-top: 18px;
+            margin-bottom: 18px;
+        }
+
+        .sub-group-title {
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: var(--brand-dark);
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        /* Footer / Page Indicators */
+        .menu-footer {
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--line-color);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.5px;
+            background-color: var(--bg-color);
+            flex-shrink: 0;
+        }
+
+        /* Invisible Tap Navigation Zones over the content */
+        .nav-zone {
+            position: absolute;
+            top: 60px;
+            bottom: 40px;
+            width: 35%;
+            z-index: 10;
+            cursor: pointer;
+        }
+        #nav-left { left: 0; }
+        #nav-right { right: 0; }
+
+        .page-hint {
+            position: absolute; inset: 0; z-index: 11; pointer-events: none;
+            opacity: 0; transition: opacity .4s ease;
+        }
+        .page-hint.show { opacity: 1; }
+        .page-hint b {
+            position: absolute; top: 48%; font-size: 1.6rem; color: var(--accent-gold);
+            animation: hintPulse 1.4s ease-in-out infinite;
+        }
+        .page-hint b:first-child { left: 8px; }
+        .page-hint b:nth-child(2) { right: 8px; }
+        .page-hint span {
+            position: absolute; left: 50%; bottom: 52px; transform: translateX(-50%);
+            background: var(--brand-dark); color: #fff; font-size: .7rem;
+            letter-spacing: .4px; padding: 6px 12px; border-radius: 20px; white-space: nowrap;
+        }
+        @keyframes hintPulse { 50% { opacity: .35; transform: scale(1.12); } }
+    </style>
+</head>
+<body>
+
+<div class="menu-container">
+    <!-- Click zones for tap navigation -->
+    <div id="nav-left" class="nav-zone" onclick="changePage(-1)"></div>
+    <div id="nav-right" class="nav-zone" onclick="changePage(1)"></div>
+    <div id="page-hint" class="page-hint"><b>‹</b><b>›</b><span>Toca los lados para cambiar</span></div>
+
+    <div class="menu-header">
+        <img src="img/hesed.png" alt="Hesed Café">
+    </div>
+
+    <div class="page-content">
+
+        <!-- PAGE 1 -->
+        <div class="menu-page active" id="page-1">
+            <h2 class="section-title t-green">Caliente</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-name">AMERICANO</div></div><div class="item-price">$60</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">ESPRESSO</div></div><div class="item-price">$45</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">CORTADO</div></div><div class="item-price">$45</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">LATTE</div></div><div class="item-price">$80</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">CAPPUCCINO</div></div><div class="item-price">$80</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">DIRTY CHAI</div></div><div class="item-price">$95</div></div>
+
+            <h2 class="section-title t-red" style="margin-top:20px;">En Las Rocas</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-name">AMERICANO</div></div><div class="item-price">$65</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">LATTE</div></div><div class="item-price">$85</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">ESPRESSO TONIC</div></div><div class="item-price">$85</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">DIRTY CHAI</div></div><div class="item-price">$95</div></div>
+
+            <h2 class="section-title t-gold" style="margin-top:20px;">Tónicos</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-name">FRUTOS ROJOS</div></div><div class="item-price">$100</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">NARANJA</div></div><div class="item-price">$100</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">MATCHA TONIC</div></div><div class="item-price">$100</div></div>
+        </div>
+
+        <!-- PAGE 2 -->
+        <div class="menu-page" id="page-2">
+            <h2 class="section-title t-red">Opciones Sin Café</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-name">MATCHA LATTE</div></div><div class="item-price">$95</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">CHAI</div></div><div class="item-price">$75</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">CHAI PLÁTANO</div></div><div class="item-price">$90</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">FRAPPÉ</div><div class="item-desc">Oreo · Mazapán · Mocha</div></div><div class="item-price">$85</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">REFRESHERS</div><div class="item-desc">Limonada de frutos rojos · Limonada de naranja</div></div><div class="item-price">$85</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">TISANA</div><div class="item-desc">Fresa kiwi · Frutos rojos</div></div><div class="item-price">$70</div></div>
+
+            <h2 class="section-title t-gold" style="margin-top:20px;">Jarabes</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-desc" style="font-size:0.8rem;">Vainilla · Caramelo · Avellana · Crema irlandesa · Lavanda · Mocha</div></div><div class="item-price">+$15</div></div>
+
+            <h2 class="section-title t-green" style="margin-top:20px;">Extras</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-name">LECHES VEGETALES</div><div class="item-desc">Avena · Coco · Almendra</div></div><div class="item-price">$20</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">COLD FOAM</div><div class="item-desc">Vainilla · Coco · Plátano · Lotus</div></div><div class="item-price">$20</div></div>
+        </div>
+
+        <!-- PAGE 3 -->
+        <div class="menu-page" id="page-3">
+            <h2 class="section-title t-red">Sándwiches</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-name">ENSALADA DE ATÚN</div><div class="item-desc">Pan multigrano<br>Atún · Apio · Mostaza Dijon · Mayonesa de jalapeño · Pepinillo · Queso suizo · Lechuga romana</div></div><div class="item-price">$145</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">ENSALADA DE POLLO</div><div class="item-desc">Pan de 21 granos orgánico<br>Pollo · Arándanos · Papa · Zanahoria · Apio · Crema chipotle con tocino · Lechuga romana</div></div><div class="item-price">$145</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">CIABATTA BLACK FOREST</div><div class="item-desc">Ciabatta de tomate<br>Jamón ahumado · Queso Gouda · Mayo-mostaza · Cebolla con tocino</div></div><div class="item-price">$185</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">CIABATTA ROAST BEEF</div><div class="item-desc">Ciabatta de aceitunas<br>Roast beef · Queso Havarti · Lechugas mixtas · Mostaza Dijon · Crema de espinacas</div></div><div class="item-price">$185</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">BAGUETTE ITALIANA</div><div class="item-desc">Baguette de cebolla<br>Salami · Mozzarella · Pesto · Arúgula · Lechuga romana</div></div><div class="item-price">$185</div></div>
+        </div>
+
+        <!-- PAGE 4 -->
+        <div class="menu-page" id="page-4">
+            <h2 class="section-title t-green">Ensaladas</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-name">ENSALADA CÉSAR + POLLO</div><div class="item-desc">Pechuga de pollo · Lechuga romana · Parmesano · Crutones · Aderezo César</div></div><div class="item-price">$180</div></div>
+
+            <h2 class="section-title t-red" style="margin-top:25px;">Horneados</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-name">CROISSANT</div><div class="item-desc">Almendras · Pistache</div></div><div class="item-price">$65</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">BANANA BREAD</div></div><div class="item-price">$50</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">MINI ROL DE CANELA</div></div><div class="item-price">$40</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">MINI NEW YORK ROLL</div><div class="item-desc">Nutella · Pistache</div></div><div class="item-price">$65</div></div>
+        </div>
+
+        <!-- PAGE 5 -->
+        <div class="menu-page" id="page-5">
+            <h2 class="section-title t-red">Yogures</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-name">FRUTOS ROJOS + MIEL</div><div class="item-desc">Granola mixta<br>Yogur griego · Miel · Compota de frutos rojos</div></div><div class="item-price">$105</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">MANGO + MARACUYÁ</div><div class="item-desc">Granola con coco<br>Yogur griego · Compota de mango y maracuyá</div></div><div class="item-price">$105</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">DURAZNO + VAINILLA</div><div class="item-desc">Granola con canela<br>Yogur griego · Vainilla · Compota de durazno</div></div><div class="item-price">$105</div></div>
+
+            <h2 class="section-title t-red" style="margin-top:20px;">Overnight Oats</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-name">FRUTOS ROJOS</div><div class="item-desc">Avena · Yogur griego · Leche · Chía · Miel de maple · Nueces</div></div><div class="item-price">$85</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">CACAO + CREMA DE CACAHUATE</div><div class="item-desc">Avena · Yogur griego · Leche · Chía · Cacao · Nueces</div></div><div class="item-price">$85</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">MOCHA</div><div class="item-desc">Avena · Yogur griego · Leche · Chía · Cacao · Café</div></div><div class="item-price">$85</div></div>
+
+            <h2 class="section-title t-gold" style="margin-top:20px;">Gelatinas · Sin Azúcar Añadida</h2>
+            <div class="menu-item"><div class="item-details"><div class="item-name">FRESA + CREMA</div></div><div class="item-price">$100</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">CAFÉ HESED + VAINILLA</div></div><div class="item-price">$100</div></div>
+            <div class="menu-item"><div class="item-details"><div class="item-name">MANGO + MARACUYÁ</div></div><div class="item-price">$100</div></div>
+        </div>
+
+    </div>
+
+    <div class="menu-footer">
+        <span>DISPONIBILIDAD SUJETA A EXISTENCIAS</span>
+        <span id="page-indicator">1/5</span>
+    </div>
+</div>
+
+<script>
+    let currentPage = 1;
+    const totalPages = 5;
+
+    function changePage(direction) {
+        currentPage += direction;
+        if (currentPage > totalPages) currentPage = 1; // Loop back to start
+        if (currentPage < 1) currentPage = totalPages;  // Loop to end
+
+        // Toggle active page
+        document.querySelectorAll('.menu-page').forEach((page, index) => {
+            const on = index + 1 === currentPage;
+            page.className = 'menu-page' + (on ? ' active ' + (direction > 0 ? 'from-right' : 'from-left') : '');
+        });
+
+        // Update footer counter
+        document.getElementById('page-indicator').innerText = `${currentPage}/${totalPages}`;
+        
+        // Scroll content back to top on flip
+        document.querySelector('.page-content').scrollTop = 0;
+        resetHint();
+    }
+
+    let idle;
+    function resetHint() {
+        document.getElementById('page-hint').classList.remove('show');
+        clearTimeout(idle);
+        idle = setTimeout(() => document.getElementById('page-hint').classList.add('show'), 30000);
+    }
+    document.addEventListener('pointerdown', resetHint);
+    document.querySelector('.page-content').addEventListener('scroll', resetHint);
+    resetHint();
+</script>
+
+</body>
+</html>
